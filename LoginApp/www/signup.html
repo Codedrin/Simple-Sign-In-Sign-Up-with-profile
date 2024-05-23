@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #ff7e5f, #feb47b); 
+            height: 100vh; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        .container {
+            margin-top: 100px;
+            margin-bottom: 100px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px; 
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); 
+        }
+        h3 {
+            text-align: center;
+            color: #feb47b;
+            font-weight: bold;
+        }
+        .form-control {
+            border-radius: 10px; 
+        }
+        .btn-primary {
+            background-color: #ff7e5f; 
+            border: none; 
+            border-radius: 10px; 
+            padding: 10px 20px;
+            margin: 10px;
+        }
+        .btn-primary:hover {
+            background-color: #ffd75f; 
+        }
+        .input-group-append button {
+            border-radius: 0 10px 10px 0;
+        }
+    </style>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script>
+
+        var firebaseConfig = {
+            apiKey: "AIzaSyAeK4Y7muZJDDXY3ffdjuPMXwnBe1ZX70A",
+            authDomain: "loginapp-3cac3.firebaseapp.com",
+            projectId: "loginapp-3cac3",
+            storageBucket: "loginapp-3cac3",
+            messagingSenderId: "283818898807",
+            appId: "1:283818898807:web:20451431f4e159293f1d72",
+            measurementId: "G-NR8N93TKK6"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                       <h3>Sign Up</h3>
+                        <form id="signupForm">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" class="form-control" id="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" id="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" required>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="showPassword">Show</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Signup</button>
+                            <input type="button" class="btn btn-primary" value="Login" onclick="window.location.href='index.html'">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById("showPassword").addEventListener("click", function() {
+            var passwordInput = document.getElementById("password");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                this.textContent = "Hide";
+            } else {
+                passwordInput.type = "password";
+                this.textContent = "Show";
+            }
+        });
+
+        document.getElementById("signupForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const firstName = document.getElementById("firstName").value;
+            const lastName = document.getElementById("lastName").value;
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Signed in
+                    const user = userCredential.user;
+                    return db.collection("users").doc(user.uid).set({
+                        firstName: firstName,
+                        lastName: lastName,
+                        username: username,
+                        email: email
+                    });
+                })
+                .then(() => {
+                    alert("User signed up and data stored!");
+                  
+                    window.location.href = "index.html";
+                })
+                .catch((error) => {
+                    console.error("Error signing up: ", error);
+                    alert(error.message);
+                });
+        });
+    </script>
+</body>
+</html>

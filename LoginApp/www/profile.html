@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+    <style>
+        .profile-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            background-color: #fff;
+        }
+        .profile-icon {
+            font-size: 50px;
+            color: #ff7e5f;
+            margin-bottom: 15px;
+        }
+        .profile-detail {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+        .signout-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff7e5f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .signout-button:hover {
+            background-color: #ff6b49;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="profile-card">
+                    <i class="fas fa-user-circle profile-icon"></i>
+                    <div id="profile-details">
+                        <div class="profile-detail"><i class="fas fa-user"></i> <span id="firstName"></span> <span id="lastName"></span></div>
+                        <div class="profile-detail"><i class="fas fa-user-tag"></i> <span id="username"></span></div>
+                        <div class="profile-detail"><i class="fas fa-envelope"></i> <span id="email"></span></div>
+                    </div>
+                    <button class="signout-button" id="signout">Sign Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script>
+        
+        var firebaseConfig = {
+            apiKey: "AIzaSyAeK4Y7muZJDDXY3ffdjuPMXwnBe1ZX70A",
+            authDomain: "loginapp-3cac3.firebaseapp.com",
+            projectId: "loginapp-3cac3",
+            storageBucket: "loginapp-3cac3",
+            messagingSenderId: "283818898807",
+            appId: "1:283818898807:web:20451431f4e159293f1d72",
+            measurementId: "G-NR8N93TKK6"
+        };
+  
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+    
+    <script>
+      
+        const fetchUserProfile = async (userId) => {
+            try {
+                const userDoc = await db.collection("users").doc(userId).get();
+                if (userDoc.exists) {
+                    return userDoc.data();
+                } else {
+                    throw new Error("User data not found");
+                }
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+                throw error;
+            }
+        };
+
+
+        const getUrlParams = (param) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        };
+    
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+               
+                const userId = getUrlParams("userId");
+
+
+                const userProfile = await fetchUserProfile(userId);
+                
+      
+                document.getElementById('firstName').textContent = userProfile.firstName;
+                document.getElementById('lastName').textContent = userProfile.lastName;
+                document.getElementById('username').textContent = userProfile.username;
+                document.getElementById('email').textContent = userProfile.email;
+            } catch (error) {
+                console.error("Error fetching or displaying user profile:", error);
+            }
+        });
+
+
+        document.getElementById('signout').addEventListener('click', function() {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            }).catch((error) => {
+                console.error("Error signing out:", error);
+            });
+        });
+    </script>
+</body>
+</html>

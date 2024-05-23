@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoginApp</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .bg-img {
+            height: 100%;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        .form-container h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-container label {
+            margin-bottom: 15px;
+        }
+        .form-container input[type="email"],
+        .form-container input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .form-container button {
+            padding: 10px;
+            background-color: #ff7e5f;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-primary{
+            margin-top: 30px;
+            background-color: #ff6b49;
+            border: none;
+        }
+  
+        
+        .form-container button:hover {
+            background-color: #ff6b49;
+        }
+        .divsocial {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .divsocial .go {
+            background-color: #ff7e5f;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .divsocial .go i {
+            margin-right: 5px;
+        }
+        .form {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="bg-img">
+        <div class="form-container">
+            <h3>Login</h3>
+            <form id="login-form">
+                <label for="email">Username</label>
+                <input type="email" placeholder="Email or Phone" name="email" id="email">
+                <label for="password">Password</label>
+                <input type="password" placeholder="Password" name="password" id="password">
+                <button type="submit">Login</button>
+            </form>
+        
+            <div class="form">
+                <p>Don't have an account? <a href="signup.html">Create One</a></p>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyAeK4Y7muZJDDXY3ffdjuPMXwnBe1ZX70A",
+            authDomain: "loginapp-3cac3.firebaseapp.com",
+            projectId: "loginapp-3cac3",
+            storageBucket: "loginapp-3cac3",
+            messagingSenderId: "283818898807",
+            appId: "1:283818898807:web:20451431f4e159293f1d72",
+            measurementId: "G-NR8N93TKK6"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+<script>
+
+
+        // Email and Password Login
+        document.getElementById("login-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    return db.collection("users").doc(user.uid).get()
+                        .then((doc) => {
+                            if (doc.exists) {
+                                window.location.href = "profile.html?userId=" + user.uid;
+                            } else {
+                                alert("No user found in the database.");
+                            }
+                        });
+                })
+                .catch((error) => {
+                    console.error("Error logging in: ", error);
+                    alert("Incorrect username or password.");
+                });
+        });
+
+    </script>
+</body>
+</html>
