@@ -36,6 +36,12 @@
         .signout-button:hover {
             background-color: #ff6b49;
         }
+        #profilePicture {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -43,7 +49,7 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="profile-card">
-                    <i class="fas fa-user-circle profile-icon"></i>
+                    <img id="profilePicture" src="" alt="Profile Picture" class="profile-icon">
                     <div id="profile-details">
                         <div class="profile-detail"><i class="fas fa-user"></i> <span id="firstName"></span> <span id="lastName"></span></div>
                         <div class="profile-detail"><i class="fas fa-user-tag"></i> <span id="username"></span></div>
@@ -58,6 +64,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
     <script>
         
         var firebaseConfig = {
@@ -69,15 +76,16 @@
             appId: "1:283818898807:web:20451431f4e159293f1d72",
             measurementId: "G-NR8N93TKK6"
         };
-  
+
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const storage = firebase.storage();
     </script>
     
     <script>
       
-        const fetchUserProfile = async (userId) => {
+             const fetchUserProfile = async (userId) => {
             try {
                 const userDoc = await db.collection("users").doc(userId).get();
                 if (userDoc.exists) {
@@ -90,7 +98,6 @@
                 throw error;
             }
         };
-
 
         const getUrlParams = (param) => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -110,6 +117,10 @@
                 document.getElementById('lastName').textContent = userProfile.lastName;
                 document.getElementById('username').textContent = userProfile.username;
                 document.getElementById('email').textContent = userProfile.email;
+                
+         
+                const profilePictureURL = userProfile.profilePictureURL;
+                document.getElementById('profilePicture').src = profilePictureURL || 'default_profile_picture.jpg';
             } catch (error) {
                 console.error("Error fetching or displaying user profile:", error);
             }
@@ -124,5 +135,6 @@
             });
         });
     </script>
+
 </body>
 </html>
