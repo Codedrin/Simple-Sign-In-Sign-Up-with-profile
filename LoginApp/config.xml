@@ -2,7 +2,7 @@
 <widget
     android-versionCode='1'
     id='com.iBuilderThings.LoginApp'
-    version='1.0.0'
+    version='12.0.0'
     xmlns='https://www.w3.org/ns/widgets'
     xmlns:cdv='http://cordova.apache.org/ns/1.0'>
 
